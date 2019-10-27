@@ -1,0 +1,64 @@
+<html>
+  <head>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const root = document.querySelector('#root');
+      const { render } = ReactDOM;
+      const { Component } = React;
+
+    //   const Prod = ({products}) => {
+    //       return (
+    //           <ul>
+    //             {products.map(product => 
+    //                  (
+    //                     <li key= {product.id}>{product.name}</li>
+    //                 )
+    //             )}
+    //             </ul>
+    //       )
+    //   }
+      class App extends React.Component {
+        constructor() {
+          super();
+          this.state = {
+            companies: [],
+            products: [],
+            offerings: []
+          };
+        }
+
+        componentDidMount() {
+          Promise.all([
+            axios.get('https://acme-users-api-rev.herokuapp.com/api/products'),
+            axios.get('https://acme-users-api-rev.herokuapp.com/api/offerings'),
+            axios.get('https://acme-users-api-rev.herokuapp.com/api/companies')
+          ]).then(response => {
+            const productResp = response[0].data;
+            const offeringsResp = response[1].data;
+            const companiesResp = response[2].data;
+            this.setState({
+              companies: companiesResp,
+              products: productResp,
+              offerings: offeringsResp
+            });     
+            //console.log(this.state)       
+          });
+        }
+        render() {
+          const { companies, products, offerings } = this.state;
+          console.log(products)
+          return null
+          //<Prod />;
+        }
+      }
+      render(<App />, root);
+    </script>
+  </body>
+</html>
